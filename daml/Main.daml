@@ -42,3 +42,27 @@ setup = script do
 
   submit bob do
     exerciseCmd bobTV Give with newOwner = alice
+
+
+template Omartask
+  with
+    taskId: Text
+    assignedTo: Party
+    createdBy: Party
+    isCompleted: Bool
+  where
+    signatory createdBy, assignedTo
+
+    -- Choice to mark the task as completed
+    choice CompleteOmartask : ContractId Omartask
+      controller assignedTo
+      do
+        create this with isCompleted = True
+
+    -- Choice to reassign the task
+    choice ReassignOmartask : ContractId Omartask
+      with
+        newAssignedTo: Party
+      controller createdBy
+      do
+        create this with assignedTo = newAssignedTo
